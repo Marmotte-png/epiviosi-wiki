@@ -3,6 +3,8 @@
 #
 # Usage : epiviosi-wiki-fetch [--dest DOSSIER] [--dry-run] [NOM...]
 #   NOM       : archive sans date, ex. wikipedia_fr_all_maxi, wiktionary_fr_all_nopic.
+#               Hors des dossiers habituels : DOSSIER/archive, ex.
+#               stack_exchange/security.stackexchange.com_en_all.
 #               Sans NOM : la sélection EPIVÍOSI (voir DEFAULT ci-dessous).
 #   --dest    : dossier de destination (défaut : /wiki, la partition EPIV-WIKI).
 #   --dry-run : affiche les fichiers et tailles, sans rien télécharger.
@@ -31,13 +33,19 @@ done
 [ "$dry" = 1 ] || [ -w "$dest" ] || die "pas le droit d'écrire dans $dest."
 
 # Résolution : dernier fichier daté de chaque archive, et sa taille.
-declare -A file size
+declare -A file size base
 total=0
 for name in "${names[@]}"; do
-  [[ "$name" =~ ^[a-z0-9]+_[a-z0-9_.-]+$ ]] || die "nom d'archive invalide : $name"
-  category="${name%%_*}"
+  if [[ "$name" == */* ]]; then
+    category="${name%%/*}"; b="${name#*/}"
+  else
+    b="$name"; category="${name%%_*}"
+  fi
+  [[ "$category" =~ ^[a-z0-9_]+$ && "$b" =~ ^[a-z0-9][a-z0-9.-]*_[a-z0-9_.-]+$ ]] \
+    || die "nom d'archive invalide : $name"
+  base[$name]="$b"
   index="$(curl -fsSL --retry 3 "$MIRROR/$category/")" || die "catalogue $MIRROR/$category/ inaccessible."
-  f="$(grep -oE "\"${name}_[0-9]{4}-[0-9]{2}\.zim\"" <<<"$index" | tr -d '"' | sort -u | tail -n1)"
+  f="$(grep -oE "\"${b//./\\.}_[0-9]{4}-[0-9]{2}\.zim\"" <<<"$index" | tr -d '"' | sort -u | tail -n1 || true)"
   [ -n "$f" ] || die "aucune archive « $name » sur $MIRROR/$category/."
   len="$(curl -fsSIL "$MIRROR/$category/$f" | tr -d '\r' | awk 'tolower($1)=="content-length:"{v=$2} END{print v}')"
   [ -n "$len" ] || die "taille de $f inconnue."
@@ -75,7 +83,7 @@ for name in "${names[@]}"; do
   fi
   mv "$dest/$f.part" "$dest/$f"
   echo "$f : OK."
-  for old in "$dest/${name}"_[0-9][0-9][0-9][0-9]-[0-9][0-9].zim; do
+  for old in "$dest/${base[$name]}"_[0-9][0-9][0-9][0-9]-[0-9][0-9].zim; do
     [ -e "$old" ] && [ "$old" != "$dest/$f" ] && echo "  Ancienne version encore présente : $old (à supprimer si besoin)."
   done
 done

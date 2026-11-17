@@ -38,6 +38,7 @@ somme SHA-256 de chaque fichier. Autres usages :
 ```sh
 epiviosi-wiki-fetch --dry-run                                   # tailles, sans télécharger
 epiviosi-wiki-fetch wiktionary_fr_all_nopic                     # une autre archive Kiwix
+epiviosi-wiki-fetch stack_exchange/security.stackexchange.com_en_all   # DOSSIER/archive
 nix run github:Marmotte-png/epiviosi-wiki#epiviosi-wiki-fetch -- --dest /media/…/EPIV-WIKI
                                                                 # depuis un autre Linux
 ```

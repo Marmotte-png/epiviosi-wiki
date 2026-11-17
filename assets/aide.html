@@ -31,13 +31,14 @@
   <ol>
     <li><strong>Créer la partition</strong>, au choix :
       <ul>
-        <li>dans EPIVÍOSI, sur la clé de démarrage : <code>sudo epiviosi-wiki-setup --size 60G</code>
+        <li>dans EPIVÍOSI, sur la clé de démarrage : <code>sudo epiviosi-wiki-setup --size 75G</code>
           (sans <code>--size</code>, tout l'espace libre est utilisé) ;</li>
         <li>depuis Windows, macOS ou Linux : formatez une partition ou un disque en exFAT
           avec le nom <code>EPIV-WIKI</code>.</li>
       </ul></li>
-    <li><strong>Télécharger des fichiers <code>.zim</code></strong> sur un ordinateur connecté :
-      <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
+    <li><strong>Télécharger les archives</strong>, avec une connexion : <code>epiviosi-wiki-fetch</code>
+      (Wikipédia FR complète + introductions EN, ≈ 70 Go ; reprise et vérification automatiques),
+      ou à la main sur <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
     <li><strong>Les copier</strong> à la racine de la partition (ou dans un sous-dossier).
       Le wiki se met à jour tout seul ; relancez « EPIVÍOSI WIKI » depuis le menu.</li>
   </ol>
@@ -48,25 +49,28 @@
   <ol>
     <li><strong>Create the partition</strong>, either:
       <ul>
-        <li>in EPIVÍOSI, on the boot stick: <code>sudo epiviosi-wiki-setup --size 60G</code>
+        <li>in EPIVÍOSI, on the boot stick: <code>sudo epiviosi-wiki-setup --size 75G</code>
           (without <code>--size</code>, all free space is used);</li>
         <li>from Windows, macOS or Linux: format a partition or drive as exFAT
           named <code>EPIV-WIKI</code>.</li>
       </ul></li>
-    <li><strong>Download <code>.zim</code> files</strong> on a connected computer:
-      <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
+    <li><strong>Download the archives</strong>, while online: <code>epiviosi-wiki-fetch</code>
+      (full French Wikipedia + English intros, ≈ 70 GB; automatic resume and checksum),
+      or by hand from <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
     <li><strong>Copy them</strong> to the root of the partition (or a subfolder).
       The wiki refreshes by itself; reopen “EPIVÍOSI WIKI” from the menu.</li>
   </ol>
 
   <h2>Tailles indicatives · Approximate sizes</h2>
+  <p>Catalogue Kiwix, novembre 2026 · Kiwix catalog, November 2026.</p>
   <table>
     <tr><th>Fichier · File</th><th>Contenu · Content</th><th>Taille · Size</th></tr>
-    <tr><td><code>wikipedia_fr_all_mini</code></td><td>FR, résumés · intros only</td><td>≈ 5 Go</td></tr>
-    <tr><td><code>wikipedia_fr_all_nopic</code></td><td>FR, sans images · no pictures</td><td>≈ 15 Go</td></tr>
-    <tr><td><code>wikipedia_fr_all_maxi</code></td><td>FR, complet · full</td><td>≈ 35 Go</td></tr>
-    <tr><td><code>wikipedia_en_all_nopic</code></td><td>EN, no pictures</td><td>≈ 55 GB</td></tr>
-    <tr><td><code>wikipedia_en_all_maxi</code></td><td>EN, full</td><td>≈ 110 GB</td></tr>
+    <tr><td><code>wikipedia_fr_all_mini</code></td><td>FR, introductions · intros only</td><td>≈ 6 Go</td></tr>
+    <tr><td><code>wikipedia_fr_all_nopic</code></td><td>FR, complet sans images · full, no pictures</td><td>≈ 13 Go</td></tr>
+    <tr><td><code>wikipedia_fr_all_maxi</code></td><td>FR, complet avec images · full with pictures</td><td>≈ 56 Go</td></tr>
+    <tr><td><code>wikipedia_en_all_mini</code></td><td>EN, intros only</td><td>≈ 15 GB</td></tr>
+    <tr><td><code>wikipedia_en_all_nopic</code></td><td>EN, full, no pictures</td><td>≈ 53 GB</td></tr>
+    <tr><td><code>wikipedia_en_all_maxi</code></td><td>EN, full with pictures</td><td>≈ 128 GB</td></tr>
   </table>
 </main>
 </body>

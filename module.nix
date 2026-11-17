@@ -17,6 +17,7 @@ let
   url = "http://127.0.0.1:${toString port}/";
 
   epiviosi-wiki-setup = pkgs.callPackage ./pkgs/epiviosi-wiki-setup { };
+  epiviosi-wiki-fetch = pkgs.callPackage ./pkgs/epiviosi-wiki-fetch { };
 
   # Sert tous les .zim de /wiki (et d'un niveau de sous-dossiers). Sans ZIM,
   # le service s'arrête proprement : le lanceur affiche alors la page d'aide.
@@ -180,6 +181,7 @@ in
       pkgs.kiwix-tools
       pkgs.exfatprogs
       epiviosi-wiki-setup
+      epiviosi-wiki-fetch
       launcher
       desktopItem
     ];

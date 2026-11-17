@@ -17,11 +17,13 @@
 
       packages.${system} = {
         epiviosi-wiki-setup = pkgs.callPackage ./pkgs/epiviosi-wiki-setup { };
+        epiviosi-wiki-fetch = pkgs.callPackage ./pkgs/epiviosi-wiki-fetch { };
         default = self.packages.${system}.epiviosi-wiki-setup;
       };
 
       checks.${system} = {
         epiviosi-wiki-setup = self.packages.${system}.epiviosi-wiki-setup;
+        epiviosi-wiki-fetch = self.packages.${system}.epiviosi-wiki-fetch;
         # Test en VM : montage à chaud, ajout de ZIM, redémarrage.
         vm = import ./tests/wiki.nix {
           inherit pkgs;

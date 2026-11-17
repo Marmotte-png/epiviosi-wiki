@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPIVÍOSI WIKI</title>
+<style>
+  :root { --bg: #0b1826; --fg: #f1ede4; --accent: #e8b04b; --muted: #7fa6c4; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.55 system-ui, sans-serif; }
+  main { max-width: 46rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { color: var(--accent); letter-spacing: .04em; margin-bottom: .2rem; }
+  h2 { color: var(--accent); border-top: 1px solid #ffffff22; padding-top: 1.2rem; }
+  .sub { color: var(--muted); margin-top: 0; }
+  code, kbd { background: #ffffff14; padding: .1em .35em; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: .3rem .5rem; border-bottom: 1px solid #ffffff1a; }
+  a { color: var(--accent); }
+  ol li { margin-bottom: .4rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>EPIVÍOSI WIKI</h1>
+  <p class="sub">Aucune archive ZIM n'est disponible pour l'instant. · No ZIM archive is available yet.</p>
+
+  <h2 lang="fr">Français</h2>
+  <p>Les archives (Wikipédia, Wiktionnaire…) se trouvent sur une partition
+  <strong>exFAT</strong> étiquetée <code>EPIV-WIKI</code>, montée automatiquement sur
+  <code>/wiki</code>.</p>
+  <ol>
+    <li><strong>Créer la partition</strong>, au choix :
+      <ul>
+        <li>dans EPIVÍOSI, sur la clé de démarrage : <code>sudo epiviosi-wiki-setup --size 60G</code>
+          (sans <code>--size</code>, tout l'espace libre est utilisé) ;</li>
+        <li>depuis Windows, macOS ou Linux : formatez une partition ou un disque en exFAT
+          avec le nom <code>EPIV-WIKI</code>.</li>
+      </ul></li>
+    <li><strong>Télécharger des fichiers <code>.zim</code></strong> sur un ordinateur connecté :
+      <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
+    <li><strong>Les copier</strong> à la racine de la partition (ou dans un sous-dossier).
+      Le wiki se met à jour tout seul ; relancez « EPIVÍOSI WIKI » depuis le menu.</li>
+  </ol>
+
+  <h2 lang="en">English</h2>
+  <p>Archives (Wikipedia, Wiktionary…) live on an <strong>exFAT</strong> partition labelled
+  <code>EPIV-WIKI</code>, mounted automatically on <code>/wiki</code>.</p>
+  <ol>
+    <li><strong>Create the partition</strong>, either:
+      <ul>
+        <li>in EPIVÍOSI, on the boot stick: <code>sudo epiviosi-wiki-setup --size 60G</code>
+          (without <code>--size</code>, all free space is used);</li>
+        <li>from Windows, macOS or Linux: format a partition or drive as exFAT
+          named <code>EPIV-WIKI</code>.</li>
+      </ul></li>
+    <li><strong>Download <code>.zim</code> files</strong> on a connected computer:
+      <a href="https://download.kiwix.org/zim/wikipedia/">download.kiwix.org/zim/wikipedia</a>.</li>
+    <li><strong>Copy them</strong> to the root of the partition (or a subfolder).
+      The wiki refreshes by itself; reopen “EPIVÍOSI WIKI” from the menu.</li>
+  </ol>
+
+  <h2>Tailles indicatives · Approximate sizes</h2>
+  <table>
+    <tr><th>Fichier · File</th><th>Contenu · Content</th><th>Taille · Size</th></tr>
+    <tr><td><code>wikipedia_fr_all_mini</code></td><td>FR, résumés · intros only</td><td>≈ 5 Go</td></tr>
+    <tr><td><code>wikipedia_fr_all_nopic</code></td><td>FR, sans images · no pictures</td><td>≈ 15 Go</td></tr>
+    <tr><td><code>wikipedia_fr_all_maxi</code></td><td>FR, complet · full</td><td>≈ 35 Go</td></tr>
+    <tr><td><code>wikipedia_en_all_nopic</code></td><td>EN, no pictures</td><td>≈ 55 GB</td></tr>
+    <tr><td><code>wikipedia_en_all_maxi</code></td><td>EN, full</td><td>≈ 110 GB</td></tr>
+  </table>
+</main>
+</body>
+</html>

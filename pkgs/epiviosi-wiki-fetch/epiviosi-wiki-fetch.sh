@@ -45,7 +45,7 @@ for name in "${names[@]}"; do
     || die "nom d'archive invalide : $name"
   base[$name]="$b"
   index="$(curl -fsSL --retry 3 "$MIRROR/$category/")" || die "catalogue $MIRROR/$category/ inaccessible."
-  f="$(grep -oE "\"${b//./\\.}_[0-9]{4}-[0-9]{2}\.zim\"" <<<"$index" | tr -d '"' | sort -u | tail -n1 || true)"
+  f="$(grep -oE "\"${b//./\\.}_[0-9]{4}-[0-9]{2}[a-z]?\.zim\"" <<<"$index" | tr -d '"' | sort -u | tail -n1 || true)"
   [ -n "$f" ] || die "aucune archive « $name » sur $MIRROR/$category/."
   len="$(curl -fsSIL "$MIRROR/$category/$f" | tr -d '\r' | awk 'tolower($1)=="content-length:"{v=$2} END{print v}')"
   [ -n "$len" ] || die "taille de $f inconnue."
@@ -83,7 +83,7 @@ for name in "${names[@]}"; do
   fi
   mv "$dest/$f.part" "$dest/$f"
   echo "$f : OK."
-  for old in "$dest/${base[$name]}"_[0-9][0-9][0-9][0-9]-[0-9][0-9].zim; do
+  for old in "$dest/${base[$name]}"_[0-9][0-9][0-9][0-9]-[0-9][0-9]{,[a-z]}.zim; do
     [ -e "$old" ] && [ "$old" != "$dest/$f" ] && echo "  Ancienne version encore présente : $old (à supprimer si besoin)."
   done
 done

@@ -21,12 +21,13 @@ servies par [Kiwix](https://kiwix.org) (`kiwix-serve`).
 
 La sélection par défaut est **Wikipédia FR complète avec images** (`wikipedia_fr_all_maxi`,
 ≈ 56 Go) et **l'introduction de chaque article de Wikipédia EN** (`wikipedia_en_all_mini`,
-≈ 15 Go), soit ≈ 70 Go.
+≈ 15 Go), soit ≈ 70 Go. Les modules SECURITY et MEDIC y ajoutent leur documentation
+(≈ 0,8 Go et ≈ 4,4 Go) : prévoir une partition de 80 Go.
 
 Dans EPIVÍOSI, sur la clé de démarrage :
 
 ```sh
-sudo epiviosi-wiki-setup --size 75G     # partition EPIV-WIKI (sans --size : tout l'espace libre)
+sudo epiviosi-wiki-setup --size 80G     # partition EPIV-WIKI (sans --size : tout l'espace libre)
 sudo epiviosi-persist-setup             # éventuellement, la persistance dans le reste (≈ 40 Go)
 epiviosi-wiki-fetch                     # télécharge la sélection dans /wiki (connexion requise)
 ```

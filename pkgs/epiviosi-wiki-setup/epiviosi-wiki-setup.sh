@@ -51,7 +51,9 @@ case "$(lsblk -dno TYPE,RO "$disk")" in
   *1) die "$disk est en lecture seule (CD/DVD ?). Le wiki nécessite une clé USB ou un disque." ;;
 esac
 
-pttype="$(blkid -p -o value -s PTTYPE "$disk" 2>/dev/null || true)"
+# sfdisk lit la table elle-même : blkid -p ne conclut plus (« ambigu ») quand
+# la signature iso9660 de l'image côtoie des partitions ajoutées.
+pttype="$(sfdisk -d "$disk" 2>/dev/null | sed -n 's/^label: //p' || true)"
 [ -n "$pttype" ] || die "$disk n'a pas de table de partitions."
 
 echo "Disque cible : $disk ($pttype)"
@@ -63,32 +65,72 @@ printf "Tapez OUI pour continuer : "
 read -r answer
 [ "$answer" = "OUI" ] || [ "$answer" = "YES" ] || die "annulé."
 
-before="$(lsblk -lnpo NAME,TYPE "$disk" | awk '$2=="part"{print $1}' | sort)"
+# Table MBR (cas de l'ISO EPIVÍOSI copiée sur une clé) : l'ISO occupe déjà
+# 2 des 4 partitions principales (système et EFI) et sa partition système
+# commence au secteur 0, ce qui trouble les outils de partitionnement. On
+# ajoute une partition principale, puis on vérifie que les partitions
+# existantes et l'identifiant du disque n'ont pas bougé ; sinon le secteur 0
+# d'origine (table MBR) est remis en place.
+ajout_partition_dos() {  # TAILLE (vide : tout l'espace) TYPE
+  local avant apres mbr err
+  avant="$(sfdisk -d "$disk" | grep -E '^(label-id|[^ ]+ : start=)')"
+  [ "$(grep -c ' : start=' <<<"$avant")" -lt 4 ] \
+    || die "4 partitions principales déjà présentes : plus de place (table MBR)."
+  mbr="$(mktemp)"
+  dd if="$disk" of="$mbr" bs=512 count=1 status=none
+  err="$(echo ",$1,$2" | sfdisk --append --no-reread --wipe never "$disk" 2>&1 >/dev/null)" \
+    || { rm -f "$mbr"
+         if grep -q "No free sectors" <<<"$err"; then
+           die "plus d'espace libre sur le disque. La persistance (epiviosi-persist-setup sans --size) prend tout l'espace restant : créez le wiki avant elle."
+         fi
+         die "création de la partition impossible : $(tail -n1 <<<"$err")"; }
+  apres="$(sfdisk -d "$disk" | grep -E '^(label-id|[^ ]+ : start=)')"
+  if [ "$(grep -vxFf <(printf '%s\n' "$apres") <<<"$avant" || true)" != "" ]; then
+    dd if="$mbr" of="$disk" bs=512 count=1 conv=notrunc,fsync status=none
+    rm -f "$mbr"
+    die "la table de partitions a été modifiée de façon inattendue ; table d'origine restaurée."
+  fi
+  rm -f "$mbr"
+}
+
+# Entrées de la table de partitions (une ligne par partition).
+entrees() { sfdisk -d "$disk" | grep -E '^[^ ]+ : start=' || true; }
+
+table_avant="$(entrees)"
 
 case "$pttype" in
   gpt)
-    # Image hybride : l'en-tête GPT de secours est à la fin de l'image et non
-    # à la fin du disque. On le déplace pour libérer l'espace restant.
+    # Disque GPT : l'en-tête de secours doit être à la fin du disque
+    # (s'il a été copié d'une image plus petite). On le déplace.
     sgdisk -e "$disk" >/dev/null
     end="0"; [ -n "$size" ] && end="+$size"
     sgdisk -n "0:0:$end" -t "0:0700" -c "0:$LABEL" "$disk" >/dev/null || die "création de la partition impossible (espace libre insuffisant ?)."
     ;;
   dos)
-    echo ",$size,07" | sfdisk --append --no-reread --wipe never "$disk" >/dev/null || die "création de la partition impossible (espace libre insuffisant ?)."
+    ajout_partition_dos "$size" 07
     ;;
   *)
     die "type de table de partitions non pris en charge : $pttype"
     ;;
 esac
 
-# Le disque est en cours d'utilisation (il porte /iso) : le noyau refuse de
-# relire la table. On ajoute seulement les nouvelles partitions.
+# La nouvelle partition est la seule entrée de la table qui n'existait pas
+# avant : on ne se fie pas à ce que le noyau affiche (sur l'image ISO, sa
+# partition système, qui commence au secteur 0, peut n'apparaître qu'après coup
+# et serait prise à tort pour la nouvelle).
+part="$(entrees | grep -vxFf <([ -n "$table_avant" ] && printf '%s\n' "$table_avant") | sed -nE 's/^([^ ]+) : .*/\1/p' | head -n1 || true)"
+[ -n "$part" ] || die "nouvelle partition introuvable dans la table."
+
+# Le disque est peut-être en cours d'utilisation (il porte /iso) : le noyau
+# refuse alors de relire la table. On ajoute seulement les partitions qui lui
+# manquent, sans toucher à celles qui existent.
 partx -a "$disk" 2>/dev/null || true
 udevadm settle
-
-after="$(lsblk -lnpo NAME,TYPE "$disk" | awk '$2=="part"{print $1}' | sort)"
-part="$(comm -13 <(echo "$before") <(echo "$after") | head -n1)"
-[ -n "$part" ] || die "nouvelle partition introuvable ; redémarrez puis relancez la commande."
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  [ -b "$part" ] && break
+  sleep 1
+done
+[ -b "$part" ] || die "la partition $part n'apparaît pas ; redémarrez puis relancez la commande."
 
 mkfs.exfat -q -L "$LABEL" "$part" >/dev/null
 udevadm settle

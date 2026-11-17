@@ -5,6 +5,7 @@
   exfatprogs,
   gawk,
   gnugrep,
+  gnused,
   coreutils,
   systemd,
 }:
@@ -16,6 +17,7 @@ writeShellApplication {
     exfatprogs
     gawk
     gnugrep
+    gnused
     coreutils
     systemd
   ];
